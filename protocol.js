@@ -9,7 +9,6 @@ function encodeParameters(param) {
             if (typeStr[k] == 'f') upCommingTypes.push("float")
         }
     }
-    console.log(upCommingTypes)
     let bufferOut = []
     for (let i = 0; i < param.length; i++) {
         let currentType = upCommingTypes.shift()
@@ -106,5 +105,5 @@ function decodeParameters(param) {
 }
 module.exports = {
     encodeParameters,
-    encodeParameters
+    decodeParameters
 }
