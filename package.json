@@ -10,6 +10,7 @@
     "type": "git",
     "url": "https://gitlab.ltspgzs.cn/unics/m32Control"
   },
+  "keywords": ["midas","m32","sdk"],
   "author": "Tianle Yu",
   "license": "ISC"
 }
