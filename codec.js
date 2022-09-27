@@ -1,63 +1,35 @@
-const dgram = require('dgram');
-
-const target = "10.0.10.15"
-
-var client = dgram.createSocket('udp4');
-
-client.on('listening', function () {
-    var address = client.address();
-    console.log('UDP Client listening on ' + address.address + ":" + address.port);
-    client.setBroadcast(true);
-});
-
-client.bind(10434, function () {
-    client.setBroadcast(true);
-});
-
-//setName buffToSend.push(new Buffer.from('/ch/01/config/name\0\0,s\0\0unics\0\0\0'))
-
-//setFader
-// buffToSend.push(new Buffer.from('/ch/01/mix/fader\0\0\0\0,f\0\0'))
-// buffToSend.push(new Buffer.from([0x3f, 0x7f, 0x00, 0x00]))
-//endSetFader
-function setFader(ch, val) {
-    ch = ch < 10 ? "0" + ch : ch
-    let buffToSend = []
-    let b = new Buffer.alloc(4);
-    b.fill(0);
-    b.writeFloatBE(val);
-    buffToSend.push(new Buffer.from('/ch/' + ch + '/mix/fader\0\0\0\0,f\0\0'))
-    buffToSend.push(b)
-    let buff = Buffer.concat(buffToSend)
-    return buff
-}
-
 function encodeParameters(param) {
+    //Second parameter must be the types for following ones
+    let typeStr = param[1]
+    let upCommingTypes = ['string', 'string']
+    if (typeStr) {
+        for (let k = 0; k < typeStr.length; k++) {
+            if (typeStr[k] == 's') upCommingTypes.push("string")
+            if (typeStr[k] == 'i') upCommingTypes.push("int")
+            if (typeStr[k] == 'f') upCommingTypes.push("float")
+        }
+    }
+    console.log(upCommingTypes)
     let bufferOut = []
     for (let i = 0; i < param.length; i++) {
-        if (typeof (param[i]) == "string") {
-            let intVal = parseInt(param[i])
-            //Is a INT?
-            if (isNaN(intVal)) {
-                //NO
-                bufferOut.push(new Buffer.from(param[i]))
-                for (let j = 0; j < (4 - param[i].length % 4); j++) {
-                    bufferOut.push(new Buffer.from([0x00]))
-                }
-            } else {
-                //YES
-                let b = new Buffer.alloc(4);
-                b.fill(0);
-                b.writeIntBE(intVal, 0, 4);
-                bufferOut.push(b)
-                console.log(b)
+        let currentType = upCommingTypes.shift()
+        if (currentType == "string") {
+            bufferOut.push(new Buffer.from(param[i]))
+            for (let j = 0; j < (4 - param[i].length % 4); j++) {
+                bufferOut.push(new Buffer.from([0x00]))
             }
         }
         //ONLY FOR FLOAT
-        if (typeof (param[i]) == "number") {
+        if (currentType == "float") {
             let b = new Buffer.alloc(4);
             b.fill(0);
             b.writeFloatBE(param[i]);
+            bufferOut.push(b)
+        }
+        if (currentType == "int") {
+            let b = new Buffer.alloc(4);
+            b.fill(0);
+            b.writeIntBE(intVal, 0, 4);
             bufferOut.push(b)
         }
     }
@@ -97,10 +69,12 @@ function decodeParameters(param) {
                 }
             }
             if (chunckType == "float") {
+                //Convert Float
                 let a = slicedArray[i].readFloatBE(0)
                 out.push(a)
             }
             if (chunckType == "int") {
+                //Convert Int
                 let a = slicedArray[i].readIntBE(0, 4)
                 out.push(a)
             }
@@ -128,22 +102,9 @@ function decodeParameters(param) {
             arrayBuffer.length = 0
         }
     }
-    console.log(out)
-
+    return out
 }
-
-
-
-// buffToSend.push(new Buffer.from('0.8\0'))
-// client.send(encodeParameters(['/ch/01/mix/fader']), 10023, target, function (err, bytes) {});
-client.send(encodeParameters(['/config/chlink/1-2']), 10023, target, function (err, bytes) { });
-// for (i = 0; i < 8; i++) {
-//     client.send(setFader(i + 1, 0), 10023, target, function (err, bytes) {
-//     });
-// }
-client.on("message", (d) => {
-    decodeParameters(d)
-})
-// client.send(encodeParameters(["/xinfo", ","]), 10023, "255.255.255.255", function (err, bytes) {
-// });
-
+module.exports = {
+    encodeParameters,
+    encodeParameters
+}
