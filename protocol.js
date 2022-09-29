@@ -1,4 +1,5 @@
 function encodeParameters(param) {
+    if (!param) return false;
     //Second parameter must be the types for following ones
     let typeStr = param[1]
     let upCommingTypes = ['string', 'string']
@@ -28,7 +29,7 @@ function encodeParameters(param) {
         if (currentType == "int") {
             let b = new Buffer.alloc(4);
             b.fill(0);
-            b.writeIntBE(intVal, 0, 4);
+            b.writeIntBE(param[i], 0, 4);
             bufferOut.push(b)
         }
     }

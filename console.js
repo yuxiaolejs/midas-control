@@ -24,6 +24,7 @@ function Console(server) {
 }
 Console.prototype.send = function (param) {
     let data = protocol.encodeParameters(param)
+    if (!data) return false;
     this.client.send(data, 10023, this.server, (err, bytes) => { });
 }
 
@@ -34,9 +35,10 @@ Console.prototype.search = function () {
 
 Console.prototype.exec = function (...agrs) {
     let data = protocol.encodeParameters(methods.parseMethodParams(...agrs))
+    if (!data) return false;
     this.client.send(data, 10023, this.server, (err, bytes) => { });
 }
 
-Console.prototype.methods = methods.methods
+Console.prototype.methods = methods.getMethods()
 
 module.exports = Console

@@ -1,10 +1,14 @@
 const methods_template = {
     ch: {
-        _dup: 3,
+        _dup: 32,
         config: {
-            _dup: 2,
             name: {
-                a: "/ch/#ch#/config/#config#"
+                method: "/ch/#ch#/config/name",
+                params: "s"
+            },
+            icon: {
+                method: "/ch/#ch#/config/icon",
+                params: "i"
             }
         }
     }
@@ -12,7 +16,26 @@ const methods_template = {
 
 
 function parseMethodParams(method, ...args) {
+    let methodTypes = []
+    for (let k = 0; k < method.params.length; k++) {
+        if (method.params[k] == 's') methodTypes.push("string")
+        if (method.params[k] == 'i') methodTypes.push("number")
+        if (method.params[k] == 'f') methodTypes.push("number")
+    }
+    if (args.length != methodTypes.length) {
+        console.log(new Error("Type Error: " + method.method + " requires " + methodTypes.length + " arguments but got " + args.length))
+        return false;
+    }
 
+    let output = [method.method, "," + method.params]
+    for (let i = 0; i < args.length; i++) {
+        if (typeof (args[i]) != methodTypes[i]) {
+            console.log(new Error("Type Error: " + method.method + " requires " + methodTypes[i] + " but got " + typeof (args[i])))
+            return false;
+        }
+        output.push(args[i])
+    }
+    return output
 }
 
 function getItem(obj, key, variables) {
@@ -35,7 +58,7 @@ function getItem(obj, key, variables) {
         let kys = Object.keys(obj)
         for (let j = 0; j < kys.length; j++) {
             if (typeof (obj[kys[j]]) == "object") {
-                obj[kys[j]] = getItem(obj[kys[j]], kys[j], variables)
+                obj[kys[j]] = getItem(obj[kys[j]], kys[j], Object.assign({}, variables))
             }
             if (typeof (obj[kys[j]]) == "string") {
                 let var_kys = Object.keys(variables)
@@ -61,11 +84,11 @@ function getMethods() {
     for (i = 0; i < keys.length; i++) {
         methods[keys[i]] = getItem(methods_template[keys[i]], keys[i])
     }
-    console.log((methods.ch[2].config))
+    return methods
 }
 
-getMethods()
 
 module.exports = {
+    getMethods,
     parseMethodParams
 }
