@@ -40,5 +40,6 @@ Console.prototype.exec = function (...agrs) {
 }
 
 Console.prototype.methods = methods.getMethods()
+Console.prototype.methodList = methods.getMethodList()
 
 module.exports = Console

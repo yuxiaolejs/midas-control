@@ -2,6 +2,7 @@ const Console = require('./console')
 let m = new Console("10.0.10.15")
 m.events.on("data", (d) => {
     console.log(d)
+    console.log(m.methodList.indexOf(d[0]))
 })
 m.search()
 const fs = require("fs")

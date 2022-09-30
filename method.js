@@ -1273,8 +1273,26 @@ function getMethods() {
     return methods
 }
 
+function getObjectMethods(object) {
+    if (object.method && typeof (object.method) == "string") {
+        return object.method
+    } else {
+        let list = []
+        let keys = Object.keys(object)
+        for (let i = 0; i < keys.length; i++) {
+            list = list.concat(getObjectMethods(object[keys[i]]))
+        }
+        return list
+    }
+}
+
+function getMethodList() {
+    return getObjectMethods(getMethods())
+
+}
 
 module.exports = {
+    getMethodList,
     getMethods,
     parseMethodParams
 }
