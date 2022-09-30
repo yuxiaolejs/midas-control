@@ -11,7 +11,7 @@ const methods = require("./methods.json")
 fs.writeFile("./methods.json", JSON.stringify(m.methods), (e) => {
     if (e) console.log(e)
 })
-m.exec(methods.ch[16].mix.send[2].level)
+m.exec(methods.headamp[0].gain)
 m.exec(m.methods.ch[0].mix.fader, 1)
 setInterval(() => {
     m.send(["/xremote"])
