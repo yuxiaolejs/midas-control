@@ -4,9 +4,15 @@ m.events.on("data", (d) => {
     console.log(d)
 })
 m.search()
+const fs = require("fs")
 
+const methods = require("./methods.json")
 // m.exec(m.methods.ch[0].config.name, "1145")
-m.exec(m.methods.ch[0].config.icon,1)
+fs.writeFile("./methods.json", JSON.stringify(m.methods), (e) => {
+    if (e) console.log(e)
+})
+m.exec(methods.ch[16].mix.send[2].level)
+m.exec(m.methods.ch[0].mix.fader, 1)
 setInterval(() => {
     m.send(["/xremote"])
 }, 8000)
