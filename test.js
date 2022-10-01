@@ -24,3 +24,4 @@ setInterval(() => {
     m.send(["/xremote"])
     m.send(["/meters", ",si", "/meters/0", 1])
 }, 8000)
+
