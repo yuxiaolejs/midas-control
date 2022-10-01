@@ -78,6 +78,19 @@ function decodeParameters(param) {
                 let a = slicedArray[i].readIntBE(0, 4)
                 out.push(a)
             }
+            if (chunckType == "blob") {
+                let blobArray = []
+                for (i = i; i < slicedArray.length; i++) {
+                    blobArray.push(slicedArray[i])
+                }
+                let decodedArray = []
+                blobArray.shift()
+                let length = blobArray.shift().readIntLE(0, 4)
+                for (let b = 0; b < length; b++) {
+                    decodedArray.push(blobArray[b].readFloatLE(0))
+                }
+                out.push(decodedArray)
+            }
             //Skip default string processing
             continue;
         }
@@ -97,6 +110,7 @@ function decodeParameters(param) {
                     if (str[k] == 's') upCommingTypes.push("string")
                     if (str[k] == 'i') upCommingTypes.push("int")
                     if (str[k] == 'f') upCommingTypes.push("float")
+                    if (str[k] == 'b') upCommingTypes.push("blob")
                 }
             }
             arrayBuffer.length = 0
