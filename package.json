@@ -1,6 +1,6 @@
 {
   "name": "midas-control",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "",
   "main": "console.js",
   "scripts": {
@@ -8,9 +8,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.ltspgzs.cn/unics/m32Control"
+    "url": "https://github.com/yuxiaolejs/midas-control"
   },
   "keywords": ["midas","m32","sdk"],
   "author": "Tianle Yu",
-  "license": "ISC"
+  "license": "MIT"
 }
